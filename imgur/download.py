@@ -17,7 +17,6 @@ def get_cred():
     return cfg
 
 
-
 def get_favorites():
     download=0
     cfg=get_cred()
