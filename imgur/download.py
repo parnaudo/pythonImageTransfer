@@ -4,6 +4,7 @@ import pyimgur
 import os
 import credentials
 import json
+import argparse
 #set to 1 if you want to download images or just list
 #TODO figure out how to get more than the first page
 
@@ -17,8 +18,7 @@ def get_cred():
     return cfg
 
 
-def get_favorites():
-    download=0
+def get_favorites(download):
     cfg=get_cred()
     print cfg
     #Where imgur API keys should go
@@ -34,6 +34,7 @@ def get_favorites():
     #get current user or specify which username you want
     user=cfg['imgur']['user']
     im_user=im.get_user(user)
+    print "user is ",im_user
     favorites=im_user.get_gallery_favorites()
     #returns a list of image objects (each val)
     for i, val in enumerate(favorites):
@@ -44,16 +45,21 @@ def get_favorites():
             for image in album.images:
                 print "album image: ",image.link
                 fname="album_images/"+image.link.replace("http://i.imgur.com/","")
-                if download==1 and file_exists(fname) is False:
-                    image.download('album_images',image.link)
+                if download.lower()=="y" and file_exists(fname) is False:
+                    print "downloading:",fname 
+                    try:
+                        image.download('album_images',image.link)
+                    except:
+                        print "Already downloaded"
         else:
             #just image
             print "This is an image:",val.id
-            fname="normal_images/"+val.link.replace("http://i.imgur.com/","")
+            fname="normal_images/"+val.title.replace(" ","_")
+           # fname="normal_images/"+val.link.replace("http://i.imgur.com/","")
             print "file name is ",fname
-            if download==1 and file_exists(fname) is False:
-
-                val.download('normal_images',val.link)
+            if download.lower()=="y" and file_exists(fname) is False:
+                print "downloading:",fname 
+                val.download('normal_images',val.title)
 
         print "count: ",i
 
@@ -63,5 +69,16 @@ def file_exists(fname):
         return True
     else:
         return False
+if __name__ == '__main__':
 
-get_favorites()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-d",
+                        help="Download? (Y/N)",
+                        nargs=1,
+                        default=[str("N")])
+
+    args = parser.parse_args()
+
+    get_favorites(args.d[0])
+
+
