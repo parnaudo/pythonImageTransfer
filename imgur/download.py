@@ -42,27 +42,30 @@ def get_favorites(download):
         if val.is_album==True:
             #get this album so we can then iterate through the images
             album=im.get_album(val.id)
+            album_count=1
             for image in album.images:
-                print "album image: ",image.link
-                fname="album_images/"+image.link.replace("http://i.imgur.com/","")
-                if download.lower()=="y" and file_exists(fname) is False:
+                try:
+                    fname=album.title.replace(" ","_") + "_{0}".format(album_count)
+                except:
+                    fname = image.link
+                if download.lower()=="y":
                     print "downloading:",fname 
                     try:
-                        image.download('album_images',image.link)
+                        image.download('album_images',fname,True)
                     except:
                         print "Already downloaded"
+                album_count+=1
         else:
             #just image
-            print "This is an image:",val.id
-            fname="normal_images/"+val.title.replace(" ","_")
+            print "This is an image:",val.title
+            fname=val.title.replace(" ","_")
            # fname="normal_images/"+val.link.replace("http://i.imgur.com/","")
             print "file name is ",fname
-            if download.lower()=="y" and file_exists(fname) is False:
+            if download.lower()=="y":
                 print "downloading:",fname 
-                val.download('normal_images',val.title)
+                val.download('normal_images',fname,True)
 
         print "count: ",i
-
 
 def file_exists(fname):
     if os.path.isfile(fname):
