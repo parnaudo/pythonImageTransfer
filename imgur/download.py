@@ -7,7 +7,7 @@ import json
 import argparse
 #set to 1 if you want to download images or just list
 #TODO figure out how to get more than the first page
-
+## /Users/parnaudo/.pyenv/versions/analytics/lib/python2.7/site-packages/pyimgur probably need to build it here
 def get_cred():
     """ returns a dictionary of dictionaries that will
     give you access to the blocks in feste.json"""
@@ -35,6 +35,7 @@ def get_favorites(download):
     user=cfg['imgur']['user']
     im_user=im.get_user(user)
     print "user is ",im_user
+
     favorites=im_user.get_gallery_favorites()
     #returns a list of image objects (each val)
     for i, val in enumerate(favorites):
